@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+
+
+
+
+header="""
+ /$$$$$$$   /$$$$$$  /$$     /$$ /$$$$$$$$        /$$$$$$   /$$$$$$   /$$$$$$  /$$   /$$ /$$   /$$ /$$$$$$$$ /$$$$$$$        /$$$$$$ /$$$$$$$  /$$    /$$  /$$$$$$ 
+| $$__  $$ /$$__  $$|  $$   /$$/|_____ $$        /$$__  $$ /$$__  $$ /$$__  $$| $$$ | $$| $$$ | $$| $$_____/| $$__  $$      |_  $$_/| $$__  $$| $$   | $$ /$$__  $$
+| $$  \ $$| $$  \ $$ \  $$ /$$/      /$$/       | $$  \__/| $$  \__/| $$  \ $$| $$$$| $$| $$$$| $$| $$      | $$  \ $$        | $$  | $$  \ $$| $$   | $$| $$  \__/
+| $$$$$$$ | $$  | $$  \  $$$$/      /$$/        |  $$$$$$ | $$      | $$$$$$$$| $$ $$ $$| $$ $$ $$| $$$$$   | $$$$$$$/        | $$  | $$$$$$$/|  $$ / $$/|  $$$$$$ 
+| $$__  $$| $$  | $$   \  $$/      /$$/          \____  $$| $$      | $$__  $$| $$  $$$$| $$  $$$$| $$__/   | $$__  $$        | $$  | $$____/  \  $$ $$/  \____  $$
+| $$  \ $$| $$  | $$    | $$      /$$/           /$$  \ $$| $$    $$| $$  | $$| $$\  $$$| $$\  $$$| $$      | $$  \ $$        | $$  | $$        \  $$$/   /$$  \ $$
+| $$$$$$$/|  $$$$$$/    | $$     /$$$$$$$$      |  $$$$$$/|  $$$$$$/| $$  | $$| $$ \  $$| $$ \  $$| $$$$$$$$| $$  | $$       /$$$$$$| $$         \  $/   |  $$$$$$/
+|_______/  \______/     |__/    |________/       \______/  \______/ |__/  |__/|__/  \__/|__/  \__/|________/|__/  |__/      |______/|__/          \_/     \______/ 
+ ```                                                                                                                                                   
+ """
+print(header)
+
+
+import nmap 
+
+#Defining a new function as scan_services that takes host, start_port and end_port as inputs
+def scan_services(host, start_port, end_port):
+    scanner = nmap.PortScanner()
+    
+    
+    port_range = f"{start_port}-{end_port}" 
+    
+    
+    scanner.scan(hosts=host, ports=port_range, arguments='-sV') 
+    
+#Automates our port searching comand and prints out open ports and service information by taking user input for port range and includes the end range +1 if available     
+    for port in range(int(start_port), int(end_port) + 1):
+        try:
+            service_info = scanner[host]['tcp'][port]['name']  
+            print(f"Port {port} is open and running: {service_info}") 
+            
+            
+            if 'product' in scanner[host]['tcp'][port]:
+                print(f"  Product: {scanner[host]['tcp'][port]['product']}")
+            if 'version' in scanner[host]['tcp'][port]:
+                print(f"  Version: {scanner[host]['tcp'][port]['version']}")
+        except KeyError:
+            continue
+#Call back function
+def main():
+    print("Nmap Service Detection with Port Range")
+    host = input("Enter IPV4 address (e.g., 127.0.0.1): ")
+    start_port = input("Enter the start port number: ")
+    end_port = input("Enter the end port number: ")
+    scan_services(host, start_port, end_port)
+
+if __name__ == "__main__":
+    main()
